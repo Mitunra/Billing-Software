@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BillingSoftware</title>
+</head>
+<body style="background-color: #848282;" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <div style="background-color: #f2f2f2;text-align:center;" class="container mt-4">
+        <h1><u>BILLING PAGE</u></h1>
+        <div class="row mt-5">
+            <div class="col"><b>PRODUCT ID</b></div>
+            <div class="col"><b>PRODUCT NAME</b></div>
+            <div class="col"><b>PRICE</b></div>
+            <div class="col"><b>COUNT</b></div>
+            <div class="col"><b>TOTAL</b></div>
+            <div class="col"><b>ACTIONS</b></div>
+        </div>
+        <div class="row mt-4">
+            <div class="col"><input type="text" id="pId" name="pId" class="form-control"/></div>
+            <div class="col"><input type="text" id="pName" name="pName" class="form-control"/></div>
+            <div class="col"><input type="text" id="pPrice" name="pPrice" class="form-control" onkeyup="calcTotal()"/></div>
+            <div class="col"><input type="text" id="pCount" name="pCount" class="form-control" onkeyup="calcTotal()"/></div>
+            <div class="col"><input type="text" id="pTotal" name="pTotal" class="form-control" readonly/></div>
+            <div class="col"><button type="button" class="btn btn-success" onclick="addProduct()">Add Product</button></div>
+        </div>
+        <div id="productsDisplay"></div>
+        <br>
+        <div class="row mt-2">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div style="background-color: rgb(65, 65, 65); text-align:center; color: rgb(250, 250, 250)"class="col"><h4>BILL AMOUNT :</h4></div>
+            <div style="background-color:rgb(65, 65, 65); text-align:center; color:rgb(250, 250, 250);" class="col"><h4 id="totalsum" ></h4></div>
+            <div class="col"></div>
+        </div>
+
+        <h4 id="totalsum" ></h4>
+    </div>
+    <script>
+        var pId = "";
+        var pName = "";
+        var pPrice = "";
+        var pCount = "";
+        var pTotal = "";
+        var products =[
+                        ["1001", "Rice", "50", "2", "100"],
+                        ["1002", "Ice", "60", "2", "120"],
+                        ["1003", "Choco", "20", "10", "200"]
+                      ];
+
+        function getInputs(){
+            pId = document.getElementById('pId');
+            pName = document.getElementById('pName');
+            pPrice = document.getElementById('pPrice');
+            pCount = document.getElementById('pCount');
+            pTotal = document.getElementById('pTotal');
+        }
+        function calcTotal(){
+            getInputs();
+            pTotal.value = Number(pPrice.value) * Number(pCount.value);
+
+        }
+        function addProduct(){
+            getInputs();
+            let newProduct = [pId.value, pName.value, pPrice.value, pCount.value, pTotal.value];
+            products.push(newProduct);
+            displayProducts();
+            resetEntry();
+        }
+
+        function resetEntry(){
+            document.getElementById('pId').value = "";
+            document.getElementById('pName').value = "";
+            document.getElementById('pPrice').value = "";
+            document.getElementById('pCount').value = "";
+            document.getElementById('pTotal').value = "";
+        }
+
+        function deleteProduct(pIdx){
+            products.splice(pIdx, 1);
+            displayProducts();
+        }
+        
+        function updateProduct(pIdx){
+            let existingProduct = products[pIdx];
+            document.getElementById('pId').value = existingProduct[0];
+            document.getElementById('pName').value = existingProduct[1];
+            document.getElementById('pPrice').value = existingProduct[2];
+            document.getElementById('pCount').value = existingProduct[3];
+            document.getElementById('pTotal').value = existingProduct[4];
+            products.splice(pIdx, 1);
+        }
+
+        displayProducts();
+        function displayProducts(){
+
+            let result = '';
+
+            for(let pIdx=0; pIdx < products.length; pIdx++){
+
+                console.log(products[pIdx]);
+                let existProd = products[pIdx];
+                result += '<div class="row mt-4">'
+                for(let pdIdx=0; pdIdx < products[pIdx].length; pdIdx++){
+                    console.log(products[pIdx][pdIdx]);
+                    result += '<div class="col">' + products[pIdx][pdIdx] + '</div>';
+                }
+                
+                result += '<div class="col">' +
+                            '<button type="button" class="btn btn-warning" onclick="updateProduct('+ pIdx +')">Update</button>' +
+                            '<button type="button" class="btn btn-danger" onclick="deleteProduct('+ pIdx +')">Delete</button>' +
+                          '</div> </div>';
+            }
+            
+            document.getElementById('productsDisplay').innerHTML = result;
+            let sum =0;
+            for(let i=0; i<products.length; i++){
+                
+                sum+= Number(products[i][4]);
+            }
+
+            document.getElementById('totalsum').innerHTML = "Rs. "+ sum+ "/-";
+
+        }
+    </script>
+</body>
+</html>
